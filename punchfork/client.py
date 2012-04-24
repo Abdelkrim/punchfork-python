@@ -60,11 +60,11 @@ class Client(object):
         params['key'] = self.api_key
         req = self.api_base + endpoint
         result = requests.get(req, headers={'User-Agent': USER_AGENT}, params=params)
-        res = json.loads(result.content)
+        response = json.loads(result.content)
         if result.status_code == 200:
-            return res
+            return response
         else:
-            raise Exception(res['error'])
+            raise Exception(response['error'])
 
     def search(self, searchterm, ingred=None, count=None, cursor=None, sort=None,
                publisher=None, likes=None, startdate=None, enddate=None, total=None):
@@ -101,8 +101,8 @@ class Client(object):
         if total:
             params['total'] = total
 
-        res = self.request_with_key(endpoint, params)
-        recipes = RecipeCollection(res.get('count'),
+        response = self.request_with_key(endpoint, params)
+        recipes = RecipeCollection(response.get('count'),
                                    [RecipeRecord(r.get('rating'),
                                                  r.get('source_name'),
                                                  r.get('thumb'),
@@ -117,16 +117,16 @@ class Client(object):
                                                  r.get('suc'),
                                                  r.get('source_ingred'),
                                                  r.get('cat_ingred'),
-                                                 r.get('canon_ingred')) for r in res['recipes']],
-                                   res.get('next_cursor'),
-                                   res.get('total'))
+                                                 r.get('canon_ingred')) for r in response['recipes']],
+                                   response.get('next_cursor'),
+                                   response.get('total'))
         return recipes
 
     def random_recipe(self):
         """Return a random recipe."""
         endpoint = '/random_recipe'
-        res = self.request_with_key(endpoint)
-        r = res['recipe']
+        response = self.request_with_key(endpoint)
+        r = response['recipe']
         recipe = RecipeRecord(r.get('rating'),
                               r.get('source_name'),
                               r.get('thumb'),
@@ -147,8 +147,8 @@ class Client(object):
     def list_publishers(self):
         """Return the list of publishers."""
         endpoint = '/publishers'
-        res = self.request_with_key(endpoint)
-        publishers = [PublisherRecord(**p) for p in res['publishers']]
+        response = self.request_with_key(endpoint)
+        publishers = [PublisherRecord(**p) for p in response['publishers']]
         return publishers
 
     def rate_limit_status(self):
