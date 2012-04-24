@@ -45,6 +45,9 @@ PublisherRecord = namedtuple('Publisher',
                               'avg_rating'])
 
 
+DietIndex = namedtuple('DietIndex', ['diets', 'alerts'])
+
+
 class Client(object):
     """Punchfork API client."""
     def __init__(self, api_key, use_ssl=False):
@@ -153,3 +156,10 @@ class Client(object):
         endpoint = '/rate_limit_status'
         status = self.request_with_key(endpoint)
         return status['remaining_calls']
+
+    def generate_diet_index(self, ingredients):
+        """Generate a diet index for a list of ingredients."""
+        endpoint = '/diet_index'
+        params = {'ingred': ingredients}
+        response = self.request_with_key(endpoint, params)
+        return DietIndex(response.get('diets'), response.get('alerts', []))

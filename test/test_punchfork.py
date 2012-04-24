@@ -69,6 +69,7 @@ class TestSearch(PunchforkTestCase):
         search_results = self.client.search('apple', total=True)
         self.assertTrue(search_results.total > 0)
 
+
 class TestRandomRecipe(PunchforkTestCase):
     def test_basic(self):
         recipe = self.client.random_recipe()
@@ -86,6 +87,17 @@ class TestRateLimitStatus(PunchforkTestCase):
     def test_basic(self):
         rate_limit_status = self.client.rate_limit_status()
         self.assertTrue(rate_limit_status >= 0)
+
+
+class TestGenerateDietIndex(PunchforkTestCase):
+    def test_basic(self):
+        diet_index = self.client.generate_diet_index('''2 cups yellow cornmeal
+2 teaspoons baking powder
+3/4 to 1 teaspoon fine sea salt
+1 large egg, lightly beaten
+1 cup water, plus more if needed
+1/4 to 1/3 cup mild-flavored vegetable oil for frying''')
+        self.assertEqual(diet_index, punchfork.client.DietIndex(['gluten free', 'vegetarian'], []))
 
 
 if __name__ == '__main__':
